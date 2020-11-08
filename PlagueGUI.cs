@@ -59,7 +59,7 @@ namespace PlagueGUI
                 DropDownState[DropData].SearchText = GUI.TextArea(new Rect(PositionAndScale.x, PositionAndScale.y + 25, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].SearchText);
             }
 
-            if (GUI.Button(PositionAndScale, (DropDownState[DropData].IsOpen ? @"/\ " : @"\/ ") + MainButtonText + (DropDownState[DropData].IsOpen ? @" /\" : @" \/")))
+            if (GUI.Button(PositionAndScale, new GUIContent((DropDownState[DropData].IsOpen ? @"/\ " : @"\/ ") + MainButtonText + (DropDownState[DropData].IsOpen ? @" /\" : @" \/"), (DropDownState[DropData].IsOpen ? "Closes The DropDown" : "Expands The DropDown"))))
             {
                 DropDownState[DropData].IsOpen = !DropDownState[DropData].IsOpen;
             }
@@ -119,7 +119,7 @@ namespace PlagueGUI
                                     break;
 
                                 case ButtonType.Slider:
-                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item1);
+                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
 
                                     ButtonPosMultiplier++;
 
@@ -138,17 +138,15 @@ namespace PlagueGUI
                                     break;
 
                                 case ButtonType.Label:
-                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item1);
+                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
 
                                     ButtonPosMultiplier++;
                                     break;
 
                                 case ButtonType.TextArea:
-                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item2);
-
-                                    ButtonPosMultiplier++;
-
                                     string NewStringValue = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
+
+                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", Button.Key.Item2));
 
                                     if (NewStringValue != DropDownState[DropData].StringCache[Button.Value])
                                     {
