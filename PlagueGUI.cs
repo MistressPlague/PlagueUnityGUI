@@ -57,6 +57,8 @@ namespace PlagueGUI
             if (DropDownState[DropData].IsOpen && ShowSearch)
             {
                 DropDownState[DropData].SearchText = GUI.TextArea(new Rect(PositionAndScale.x, PositionAndScale.y + 25, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].SearchText);
+
+                GUI.Label(new Rect(PositionAndScale.x, PositionAndScale.y + 25, PositionAndScale.width, PositionAndScale.height), new GUIContent("", "Search The DropDown List For An Item"));
             }
 
             if (GUI.Button(PositionAndScale, new GUIContent((DropDownState[DropData].IsOpen ? @"/\ " : @"\/ ") + MainButtonText + (DropDownState[DropData].IsOpen ? @" /\" : @" \/"), (DropDownState[DropData].IsOpen ? "Closes The DropDown" : "Expands The DropDown"))))
