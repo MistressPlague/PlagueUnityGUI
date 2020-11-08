@@ -132,7 +132,7 @@ namespace PlagueGUI
                                         Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
                                     }
 
-                                    GUI.Label(new Rect(PositionAndScale.width - 19, (25 * ButtonPosMultiplier) - 4, PositionAndScale.width, PositionAndScale.height), ((int)DropDownState[DropData].FloatCache[Button.Value]).ToString());
+                                    GUI.Label(new Rect(PositionAndScale.width - 19, (25 * ButtonPosMultiplier) - 4, 35, PositionAndScale.height), new GUIContent(((int)DropDownState[DropData].FloatCache[Button.Value]).ToString(), "The Current Value Of The Slider"));
 
                                     ButtonPosMultiplier++;
                                     break;
