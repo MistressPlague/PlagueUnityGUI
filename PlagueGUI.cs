@@ -21,7 +21,7 @@ namespace PlagueGUI
         /// <param name="Buttons">Your Buttons/Toggles For The DropDown, A List Of KeyValuePairs With Key Being A Tuple Of The Button Text, The ButtonType And Default Toggle State (If Toggle ButtonType) And Value Being A Delegate To Execute On Selection</param>
         /// <param name="ShowSearch">Whether To Show The Search Bar</param>
         /// <returns>The DropDownData Instance</returns>
-        public static DropDownData DropDown(Rect PositionAndScale, string MainButtonText, List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>>> Buttons, bool ShowSearch = true)
+        public static DropDownData DropDown(Rect PositionAndScale, string MainButtonText, List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>>> Buttons, bool ShowSearch = true)
         {
             if (string.IsNullOrEmpty(MainButtonText) || Buttons == null || Buttons.Count == 0)
             {
@@ -69,7 +69,7 @@ namespace PlagueGUI
 
                     int ButtonPosMultiplier = 0;
 
-                    foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>> Button in Buttons)
+                    foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>> Button in Buttons)
                     {
                         if (!DropDownState[DropData].StringCache.ContainsKey(Button.Value))
                         {
@@ -98,7 +98,7 @@ namespace PlagueGUI
                                 case ButtonType.Button:
                                     if (GUI.Button(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2)))
                                     {
-                                        Button.Value?.Invoke(true);
+                                        Button.Value?.Invoke("", 0, 0f, true);
                                     }
 
                                     ButtonPosMultiplier++;
@@ -109,7 +109,7 @@ namespace PlagueGUI
                                     {
                                         DropDownState[DropData].BoolCache[Button.Value] = !DropDownState[DropData].BoolCache[Button.Value];
 
-                                        Button.Value?.Invoke(DropDownState[DropData].BoolCache[Button.Value]);
+                                        Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[Button.Value]);
                                     }
 
                                     ButtonPosMultiplier++;
@@ -124,7 +124,7 @@ namespace PlagueGUI
 
                                     if (GUI.changed)
                                     {
-                                        Button.Value?.Invoke(true);
+                                        Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
                                     }
 
                                     GUI.Label(new Rect(PositionAndScale.width - 12, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value].ToString());
@@ -147,7 +147,7 @@ namespace PlagueGUI
 
                                     if (GUI.changed)
                                     {
-                                        Button.Value?.Invoke(true);
+                                        Button.Value?.Invoke(DropDownState[DropData].StringCache[Button.Value], 0, 0f, true);
                                     }
 
                                     ButtonPosMultiplier++;
@@ -186,7 +186,7 @@ namespace PlagueGUI
     public class DropDownData
     {
         public string DropDownButtonText;
-        public List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>>> ButtonsToShow;
+        public List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>>> ButtonsToShow;
     }
 
     /// <summary>
@@ -199,10 +199,10 @@ namespace PlagueGUI
         public Vector2 ScrollPosition = Vector2.zero;
 
         //Caching For ButtonType Variation Data Types
-        public Dictionary<Action<bool>, string> StringCache = new Dictionary<Action<bool>, string>();
-        public Dictionary<Action<bool>, int> IntCache = new Dictionary<Action<bool>, int>();
-        public Dictionary<Action<bool>, float> FloatCache = new Dictionary<Action<bool>, float>();
-        public Dictionary<Action<bool>, bool> BoolCache = new Dictionary<Action<bool>, bool>();
+        public Dictionary<Action<string, int, float, bool>, string> StringCache = new Dictionary<Action<string, int, float, bool>, string>();
+        public Dictionary<Action<string, int, float, bool>, int> IntCache = new Dictionary<Action<string, int, float, bool>, int>();
+        public Dictionary<Action<string, int, float, bool>, float> FloatCache = new Dictionary<Action<string, int, float, bool>, float>();
+        public Dictionary<Action<string, int, float, bool>, bool> BoolCache = new Dictionary<Action<string, int, float, bool>, bool>();
     }
 
     /// <summary>
