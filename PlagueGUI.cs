@@ -1,5 +1,3 @@
-using SurviveThePleasure;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -193,6 +191,27 @@ namespace PlagueGUI
             }
 
             return DropData;
+        }
+
+        public static GUIStyle Style = new GUIStyle();
+
+        /// <summary>
+        /// Helper For Getting How Big Text Is
+        /// </summary>
+        /// <param name="text">The Text To Calculate The Size Of</param>
+        /// <returns></returns>
+        public static Vector2 SizeOfText(this string text)
+        {
+            Vector2 size = Style.CalcSize(new GUIContent(text));
+
+            size.x += 10; //Padding
+
+            if (size.y < size.x)
+            {
+                size.y = size.x;
+            }
+
+            return size;
         }
     }
 
