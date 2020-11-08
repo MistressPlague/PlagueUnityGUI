@@ -21,14 +21,17 @@ namespace PlagueGUI
         /// <param name="Buttons">Your Buttons/Toggles For The DropDown, A List Of KeyValuePairs With Key Being A Tuple Of The Button Text, The ButtonType And Default Toggle State (If Toggle ButtonType) And Value Being A Delegate To Execute On Selection</param>
         /// <param name="ShowSearch">Whether To Show The Search Bar</param>
         /// <returns>The DropDownData Instance</returns>
-        public static DropDownData DropDown(Rect PositionAndScale, string MainButtonText, List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>>> Buttons, bool ShowSearch = true)
+        public static DropDownData DropDown(Rect PositionAndScale, string MainButtonText, List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>>> Buttons, bool ShowSearch = true, bool Sort = true)
         {
             if (string.IsNullOrEmpty(MainButtonText) || Buttons == null || Buttons.Count == 0)
             {
                 return null;
             }
 
-            Buttons = Buttons.OrderBy(a => a.Key).ToList();
+            if (Sort)
+            {
+                Buttons = Buttons.OrderBy(a => a.Key.Item1).ToList();
+            }
 
             DropDownData DropData = null;
             List<DropDownData> DropDowns = DropDownState.Keys.Where(o => o.DropDownButtonText == MainButtonText).ToList();
