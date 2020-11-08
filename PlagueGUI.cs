@@ -120,10 +120,12 @@ namespace PlagueGUI
 
                                     ButtonPosMultiplier++;
 
-                                    DropDownState[DropData].FloatCache[Button.Value] = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
+                                    float NewFloatValue = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
 
-                                    if (GUI.changed)
+                                    if (NewFloatValue != DropDownState[DropData].FloatCache[Button.Value])
                                     {
+                                        DropDownState[DropData].FloatCache[Button.Value] = NewFloatValue;
+
                                         Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
                                     }
 
@@ -143,10 +145,12 @@ namespace PlagueGUI
 
                                     ButtonPosMultiplier++;
 
-                                    DropDownState[DropData].StringCache[Button.Value] = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
+                                    string NewStringValue = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
 
-                                    if (GUI.changed)
+                                    if (NewStringValue != DropDownState[DropData].StringCache[Button.Value])
                                     {
+                                        DropDownState[DropData].StringCache[Button.Value] = NewStringValue;
+
                                         Button.Value?.Invoke(DropDownState[DropData].StringCache[Button.Value], 0, 0f, true);
                                     }
 
