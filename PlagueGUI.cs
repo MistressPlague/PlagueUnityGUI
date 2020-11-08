@@ -64,128 +64,125 @@ namespace PlagueGUI
                 DropDownState[DropData].IsOpen = !DropDownState[DropData].IsOpen;
             }
 
-            if (DropDownState.ContainsKey(DropData))
+            if (DropDownState[DropData].IsOpen)
             {
-                if (DropDownState[DropData].IsOpen)
+                DropDownState[DropData].ScrollPosition = GUI.BeginScrollView(new Rect(PositionAndScale.x, PositionAndScale.y + 50, PositionAndScale.width + 25, 500), DropDownState[DropData].ScrollPosition, new Rect(0, 0, PositionAndScale.width + 25, (PositionAndScale.height * (string.IsNullOrEmpty(DropDownState[DropData].SearchText) || DropDownState[DropData].SearchText == "Search" ? Buttons.Count : Buttons.Where(b => b.Key.Item1.ToLower().Contains(DropDownState[DropData].SearchText.ToLower())).ToList().Count))));
+
+                int ButtonPosMultiplier = 0;
+
+                foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>> Button in Buttons)
                 {
-                    DropDownState[DropData].ScrollPosition = GUI.BeginScrollView(new Rect(PositionAndScale.x, PositionAndScale.y + 50, PositionAndScale.width + 25, 500), DropDownState[DropData].ScrollPosition, new Rect(0, 0, PositionAndScale.width + 25, (PositionAndScale.height * (string.IsNullOrEmpty(DropDownState[DropData].SearchText) || DropDownState[DropData].SearchText == "Search" ? Buttons.Count : Buttons.Where(b => b.Key.Item1.ToLower().Contains(DropDownState[DropData].SearchText.ToLower())).ToList().Count))));
-
-                    int ButtonPosMultiplier = 0;
-
-                    foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>> Button in Buttons)
+                    if (!DropDownState[DropData].StringCache.ContainsKey(Button.Value))
                     {
-                        if (!DropDownState[DropData].StringCache.ContainsKey(Button.Value))
+                        DropDownState[DropData].StringCache[Button.Value] = Button.Key.Item1;
+                    }
+
+                    if (!DropDownState[DropData].IntCache.ContainsKey(Button.Value))
+                    {
+                        DropDownState[DropData].IntCache[Button.Value] = 0;
+                    }
+
+                    if (!DropDownState[DropData].FloatCache.ContainsKey(Button.Value))
+                    {
+                        DropDownState[DropData].FloatCache[Button.Value] = 0f;
+                    }
+
+                    if (!DropDownState[DropData].BoolCache.ContainsKey(Button.Value))
+                    {
+                        DropDownState[DropData].BoolCache[Button.Value] = Button.Key.Item4;
+                    }
+
+                    void MakeButton()
+                    {
+                        switch (Button.Key.Item3)
                         {
-                            DropDownState[DropData].StringCache[Button.Value] = Button.Key.Item1;
-                        }
+                            case ButtonType.Button:
+                                if (GUI.Button(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2)))
+                                {
+                                    Button.Value?.Invoke("", 0, 0f, true);
+                                }
 
-                        if (!DropDownState[DropData].IntCache.ContainsKey(Button.Value))
+                                ButtonPosMultiplier++;
+                                break;
+
+                            case ButtonType.Toggle:
+                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[Button.Value], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[Button.Value])
+                                {
+                                    DropDownState[DropData].BoolCache[Button.Value] = !DropDownState[DropData].BoolCache[Button.Value];
+
+                                    Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[Button.Value]);
+                                }
+
+                                ButtonPosMultiplier++;
+                                break;
+
+                            case ButtonType.Slider:
+                                GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
+
+                                ButtonPosMultiplier++;
+
+                                float NewFloatValue = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
+
+                                if (NewFloatValue != DropDownState[DropData].FloatCache[Button.Value])
+                                {
+                                    DropDownState[DropData].FloatCache[Button.Value] = NewFloatValue;
+
+                                    Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
+                                }
+
+                                GUI.Label(new Rect(PositionAndScale.width - 19, (25 * ButtonPosMultiplier) - 4, 35, PositionAndScale.height), new GUIContent(((int)DropDownState[DropData].FloatCache[Button.Value]).ToString(), "The Current Value Of The Slider"));
+
+                                ButtonPosMultiplier++;
+                                break;
+
+                            case ButtonType.Label:
+                                GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
+
+                                ButtonPosMultiplier++;
+                                break;
+
+                            case ButtonType.TextArea:
+                                string NewStringValue = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
+
+                                GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", Button.Key.Item2));
+
+                                if (NewStringValue != DropDownState[DropData].StringCache[Button.Value])
+                                {
+                                    DropDownState[DropData].StringCache[Button.Value] = NewStringValue;
+
+                                    Button.Value?.Invoke(DropDownState[DropData].StringCache[Button.Value], 0, 0f, true);
+                                }
+
+                                ButtonPosMultiplier++;
+                                break;
+                        }
+                    }
+
+                    if (ShowSearch)
+                    {
+                        if (string.IsNullOrEmpty(DropDownState[DropData].SearchText) || DropDownState[DropData].SearchText == "Search")
                         {
-                            DropDownState[DropData].IntCache[Button.Value] = 0;
+                            MakeButton();
                         }
-
-                        if (!DropDownState[DropData].FloatCache.ContainsKey(Button.Value))
-                        {
-                            DropDownState[DropData].FloatCache[Button.Value] = 0f;
-                        }
-
-                        if (!DropDownState[DropData].BoolCache.ContainsKey(Button.Value))
-                        {
-                            DropDownState[DropData].BoolCache[Button.Value] = Button.Key.Item4;
-                        }
-
-                        void MakeButton()
-                        {
-                            switch (Button.Key.Item3)
-                            {
-                                case ButtonType.Button:
-                                    if (GUI.Button(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2)))
-                                    {
-                                        Button.Value?.Invoke("", 0, 0f, true);
-                                    }
-
-                                    ButtonPosMultiplier++;
-                                    break;
-
-                                case ButtonType.Toggle:
-                                    if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[Button.Value], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[Button.Value])
-                                    {
-                                        DropDownState[DropData].BoolCache[Button.Value] = !DropDownState[DropData].BoolCache[Button.Value];
-
-                                        Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[Button.Value]);
-                                    }
-
-                                    ButtonPosMultiplier++;
-                                    break;
-
-                                case ButtonType.Slider:
-                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
-
-                                    ButtonPosMultiplier++;
-
-                                    float NewFloatValue = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
-
-                                    if (NewFloatValue != DropDownState[DropData].FloatCache[Button.Value])
-                                    {
-                                        DropDownState[DropData].FloatCache[Button.Value] = NewFloatValue;
-
-                                        Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
-                                    }
-
-                                    GUI.Label(new Rect(PositionAndScale.width - 19, (25 * ButtonPosMultiplier) - 4, 35, PositionAndScale.height), new GUIContent(((int)DropDownState[DropData].FloatCache[Button.Value]).ToString(), "The Current Value Of The Slider"));
-
-                                    ButtonPosMultiplier++;
-                                    break;
-
-                                case ButtonType.Label:
-                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
-
-                                    ButtonPosMultiplier++;
-                                    break;
-
-                                case ButtonType.TextArea:
-                                    string NewStringValue = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
-
-                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", Button.Key.Item2));
-
-                                    if (NewStringValue != DropDownState[DropData].StringCache[Button.Value])
-                                    {
-                                        DropDownState[DropData].StringCache[Button.Value] = NewStringValue;
-
-                                        Button.Value?.Invoke(DropDownState[DropData].StringCache[Button.Value], 0, 0f, true);
-                                    }
-
-                                    ButtonPosMultiplier++;
-                                    break;
-                            }
-                        }
-
-                        if (ShowSearch)
-                        {
-                            if (string.IsNullOrEmpty(DropDownState[DropData].SearchText) || DropDownState[DropData].SearchText == "Search")
-                            {
-                                MakeButton();
-                            }
-                            else if (Button.Key.Item1.ToLower().Contains(DropDownState[DropData].SearchText.ToLower()))
-                            {
-                                MakeButton();
-                            }
-                        }
-                        else
+                        else if (Button.Key.Item1.ToLower().Contains(DropDownState[DropData].SearchText.ToLower()))
                         {
                             MakeButton();
                         }
                     }
-
-                    GUI.EndScrollView();
-
-                    if (!string.IsNullOrEmpty(GUI.tooltip))
+                    else
                     {
-                        Vector2 SizeOfText = GUI.tooltip.SizeOfText();
-
-                        GUI.Box(new Rect(Input.mousePosition.x, (Screen.height - Input.mousePosition.y) - 25, SizeOfText.x, 25), GUI.tooltip);
+                        MakeButton();
                     }
                 }
+
+                GUI.EndScrollView();
+            }
+
+            if (!string.IsNullOrEmpty(GUI.tooltip))
+            {
+                Vector2 SizeOfText = GUI.tooltip.SizeOfText();
+
+                GUI.Box(new Rect(Input.mousePosition.x, (Screen.height - Input.mousePosition.y) - 25, SizeOfText.x, 25), GUI.tooltip);
             }
 
             return DropData;
