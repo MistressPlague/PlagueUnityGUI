@@ -129,7 +129,7 @@ namespace PlagueGUI
                                         Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
                                     }
 
-                                    GUI.Label(new Rect(PositionAndScale.width - 12, (25 * ButtonPosMultiplier) - 5, PositionAndScale.width, PositionAndScale.height), ((int)DropDownState[DropData].FloatCache[Button.Value]).ToString());
+                                    GUI.Label(new Rect(PositionAndScale.width - 18, (25 * ButtonPosMultiplier) - 8, PositionAndScale.width, PositionAndScale.height), ((int)DropDownState[DropData].FloatCache[Button.Value]).ToString());
 
                                     ButtonPosMultiplier++;
                                     break;
