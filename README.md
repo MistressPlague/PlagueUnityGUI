@@ -4,9 +4,9 @@ A DropDown Addon For The GUI That Is Used In Mods To Put Buttons On Screen. (Rea
 # Example Usage
 ```csharp
 //Example
-var ListOfButtonsx = new List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>>>();/*Cache The List So You Can Append Numerous Things To It First, And Keep Your Code Clean*/
+var ListOfButtonsx = new List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>>>();/*Cache The List So You Can Append Numerous Things To It First, And Keep Your Code Clean*/
 
-ListOfButtonsx.Add(new KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>>(new Tuple<string, string, ButtonType, bool>(/*Button Text*/"Button Text", /*ToolTip Text*/"ToolTip Text", /*Button Type*/ButtonType.Button, /*Default Toggle State*/false), /*Delegate To Execute On Button Select/Toggle*/delegate (bool a)
+ListOfButtonsx.Add(new KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>>(new Tuple<string, string, ButtonType, bool>(/*Button Text*/"Button Text", /*ToolTip Text*/"ToolTip Text", /*Button Type*/ButtonType.Button, /*Default Toggle State*/false), /*Delegate To Execute On Button Select/Toggle*/delegate (string a, int b, float c, bool d)
 {
     //Code
 }));
