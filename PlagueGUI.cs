@@ -11,7 +11,7 @@ namespace PlagueGUI
         /// <summary>
         /// The DropDownState Instance, Holding The Main MetaData For The DropDown, Along With All The Internal Data For The Buttons, IsOpen, SearchText And ScrollPos
         /// </summary>
-        private static Dictionary<DropDownData, DropDownInternals> DropDownState = new Dictionary<DropDownData, DropDownInternals>();
+        public static Dictionary<DropDownData, DropDownInternals> DropDownState = new Dictionary<DropDownData, DropDownInternals>();
 
         /// <summary>
         /// Creates A GUI.DropDown Menu - Created By Plague
@@ -21,7 +21,7 @@ namespace PlagueGUI
         /// <param name="Buttons">Your Buttons/Toggles For The DropDown, A List Of KeyValuePairs With Key Being A Tuple Of The Button Text, The ButtonType And Default Toggle State (If Toggle ButtonType) And Value Being A Delegate To Execute On Selection</param>
         /// <param name="ShowSearch">Whether To Show The Search Bar</param>
         /// <returns>The DropDownData Instance</returns>
-        public static DropDownData DropDown(Rect PositionAndScale, string MainButtonText, List<KeyValuePair<Tuple<string, ButtonType, bool>, Action<bool>>> Buttons, bool ShowSearch = true)
+        public static DropDownData DropDown(Rect PositionAndScale, string MainButtonText, List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>>> Buttons, bool ShowSearch = true)
         {
             if (string.IsNullOrEmpty(MainButtonText) || Buttons == null || Buttons.Count == 0)
             {
@@ -69,30 +69,69 @@ namespace PlagueGUI
 
                     int ButtonPosMultiplier = 0;
 
-                    foreach (KeyValuePair<Tuple<string, ButtonType, bool>, Action<bool>> Button in Buttons)
+                    foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>> Button in Buttons)
                     {
-                        if (!DropDownState[DropData].ToggleStates.ContainsKey(Button.Key.Item1))
+                        if (!DropDownState[DropData].BoolCache.ContainsKey(Button.Value))
                         {
-                            DropDownState[DropData].ToggleStates[Button.Key.Item1] = Button.Key.Item3;
+                            DropDownState[DropData].BoolCache[Button.Value] = Button.Key.Item4;
+                        }
+
+                        if (!DropDownState[DropData].StringCache.ContainsKey(Button.Value))
+                        {
+                            DropDownState[DropData].StringCache[Button.Value] = Button.Key.Item1;
                         }
 
                         void MakeButton()
                         {
-                            if (Button.Key.Item2 == ButtonType.Button)
+                            switch (Button.Key.Item3)
                             {
-                                if (GUI.Button(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item1))
-                                {
-                                    Button.Value?.Invoke(true);
-                                }
-                            }
-                            else
-                            {
-                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].ToggleStates[Button.Key.Item1], Button.Key.Item1) != DropDownState[DropData].ToggleStates[Button.Key.Item1])
-                                {
-                                    DropDownState[DropData].ToggleStates[Button.Key.Item1] = !DropDownState[DropData].ToggleStates[Button.Key.Item1];
+                                case ButtonType.Button:
+                                    if (GUI.Button(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2)))
+                                    {
+                                        Button.Value?.Invoke(true);
+                                    }
 
-                                    Button.Value?.Invoke(DropDownState[DropData].ToggleStates[Button.Key.Item1]);
-                                }
+                                    ButtonPosMultiplier++;
+                                    break;
+
+                                case ButtonType.Toggle:
+                                    if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[Button.Value], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[Button.Value])
+                                    {
+                                        DropDownState[DropData].BoolCache[Button.Value] = !DropDownState[DropData].BoolCache[Button.Value];
+
+                                        Button.Value?.Invoke(DropDownState[DropData].BoolCache[Button.Value]);
+                                    }
+
+                                    ButtonPosMultiplier++;
+                                    break;
+
+                                case ButtonType.Slider:
+                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item1);
+
+                                    ButtonPosMultiplier++;
+
+                                    DropDownState[DropData].FloatCache[Button.Value] = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
+
+                                    GUI.Label(new Rect(PositionAndScale.width - 12, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value].ToString());
+
+                                    ButtonPosMultiplier++;
+                                    break;
+
+                                case ButtonType.Label:
+                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item1);
+
+                                    ButtonPosMultiplier++;
+                                    break;
+
+                                case ButtonType.TextArea:
+                                    GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), Button.Key.Item2);
+
+                                    ButtonPosMultiplier++;
+
+                                    DropDownState[DropData].StringCache[Button.Value] = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
+
+                                    ButtonPosMultiplier++;
+                                    break;
                             }
                         }
 
@@ -101,21 +140,15 @@ namespace PlagueGUI
                             if (string.IsNullOrEmpty(DropDownState[DropData].SearchText) || DropDownState[DropData].SearchText == "Search")
                             {
                                 MakeButton();
-
-                                ButtonPosMultiplier++;
                             }
                             else if (Button.Key.Item1.ToLower().Contains(DropDownState[DropData].SearchText.ToLower()))
                             {
                                 MakeButton();
-
-                                ButtonPosMultiplier++;
                             }
                         }
                         else
                         {
                             MakeButton();
-
-                            ButtonPosMultiplier++;
                         }
                     }
 
@@ -125,17 +158,6 @@ namespace PlagueGUI
 
             return DropData;
         }
-
-        /// <summary>
-        /// Internal Data For The DropDown
-        /// </summary>
-        class DropDownInternals
-        {
-            public bool IsOpen = false;
-            public string SearchText = "Search";
-            public Vector2 ScrollPosition = Vector2.zero;
-            public Dictionary<string, bool> ToggleStates = new Dictionary<string, bool>();
-        }
     }
 
     /// <summary>
@@ -144,7 +166,23 @@ namespace PlagueGUI
     public class DropDownData
     {
         public string DropDownButtonText;
-        public List<KeyValuePair<Tuple<string, ButtonType, bool>, Action<bool>>> ButtonsToShow;
+        public List<KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>>> ButtonsToShow;
+    }
+
+    /// <summary>
+    /// Internal Data For The DropDown
+    /// </summary>
+    public class DropDownInternals
+    {
+        public bool IsOpen = false;
+        public string SearchText = "Search";
+        public Vector2 ScrollPosition = Vector2.zero;
+
+        //Caching For ButtonType Variation Data Types
+        public Dictionary<Action<bool>, string> StringCache = new Dictionary<Action<bool>, string>();
+        public Dictionary<Action<bool>, int> IntCache = new Dictionary<Action<bool>, int>();
+        public Dictionary<Action<bool>, float> FloatCache = new Dictionary<Action<bool>, float>();
+        public Dictionary<Action<bool>, bool> BoolCache = new Dictionary<Action<bool>, bool>();
     }
 
     /// <summary>
@@ -153,6 +191,9 @@ namespace PlagueGUI
     public enum ButtonType
     {
         Button,
-        Toggle
+        Toggle,
+        TextArea,
+        Slider,
+        Label
     }
 }
