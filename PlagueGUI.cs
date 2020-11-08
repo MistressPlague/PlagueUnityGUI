@@ -71,14 +71,24 @@ namespace PlagueGUI
 
                     foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<bool>> Button in Buttons)
                     {
-                        if (!DropDownState[DropData].BoolCache.ContainsKey(Button.Value))
-                        {
-                            DropDownState[DropData].BoolCache[Button.Value] = Button.Key.Item4;
-                        }
-
                         if (!DropDownState[DropData].StringCache.ContainsKey(Button.Value))
                         {
                             DropDownState[DropData].StringCache[Button.Value] = Button.Key.Item1;
+                        }
+
+                        if (!DropDownState[DropData].IntCache.ContainsKey(Button.Value))
+                        {
+                            DropDownState[DropData].IntCache[Button.Value] = 0;
+                        }
+
+                        if (!DropDownState[DropData].FloatCache.ContainsKey(Button.Value))
+                        {
+                            DropDownState[DropData].FloatCache[Button.Value] = 0f;
+                        }
+
+                        if (!DropDownState[DropData].BoolCache.ContainsKey(Button.Value))
+                        {
+                            DropDownState[DropData].BoolCache[Button.Value] = Button.Key.Item4;
                         }
 
                         void MakeButton()
