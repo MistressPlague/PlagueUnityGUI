@@ -112,6 +112,11 @@ namespace PlagueGUI
 
                                     DropDownState[DropData].FloatCache[Button.Value] = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
 
+                                    if (GUI.changed)
+                                    {
+                                        Button.Value?.Invoke(true);
+                                    }
+
                                     GUI.Label(new Rect(PositionAndScale.width - 12, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value].ToString());
 
                                     ButtonPosMultiplier++;
@@ -129,6 +134,11 @@ namespace PlagueGUI
                                     ButtonPosMultiplier++;
 
                                     DropDownState[DropData].StringCache[Button.Value] = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
+
+                                    if (GUI.changed)
+                                    {
+                                        Button.Value?.Invoke(true);
+                                    }
 
                                     ButtonPosMultiplier++;
                                     break;
