@@ -1,3 +1,5 @@
+using SurviveThePleasure;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -180,6 +182,13 @@ namespace PlagueGUI
                     }
 
                     GUI.EndScrollView();
+
+                    if (!string.IsNullOrEmpty(GUI.tooltip))
+                    {
+                        Vector2 SizeOfText = GUI.tooltip.SizeOfText();
+
+                        GUI.Box(new Rect(Input.mousePosition.x, (Screen.height - Input.mousePosition.y) - 25, SizeOfText.x, 25), GUI.tooltip);
+                    }
                 }
             }
 
