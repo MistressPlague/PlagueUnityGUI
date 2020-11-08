@@ -121,7 +121,7 @@ namespace PlagueGUI
 
                                 ButtonPosMultiplier++;
 
-                                float NewFloatValue = GUI.HorizontalSlider(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width - 25, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
+                                float NewFloatValue = GUI.HorizontalSlider(new Rect(0, (25 * ButtonPosMultiplier) + 7, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
 
                                 if (NewFloatValue != DropDownState[DropData].FloatCache[Button.Value])
                                 {
@@ -130,7 +130,7 @@ namespace PlagueGUI
                                     Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
                                 }
 
-                                GUI.Label(new Rect(PositionAndScale.width - 19, (25 * ButtonPosMultiplier) - 4, 35, PositionAndScale.height), new GUIContent(((int)DropDownState[DropData].FloatCache[Button.Value]).ToString(), "The Current Value Of The Slider"));
+                                GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", "Current Value: " + ((int)DropDownState[DropData].FloatCache[Button.Value]).ToString()));
 
                                 ButtonPosMultiplier++;
                                 break;
