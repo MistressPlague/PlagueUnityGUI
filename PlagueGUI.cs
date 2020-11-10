@@ -14,7 +14,7 @@ namespace PlagueGUI
         public static Dictionary<DropDownData, DropDownInternals> DropDownState = new Dictionary<DropDownData, DropDownInternals>();
 
         /// <summary>
-        /// Creates A GUI.DropDown Menu - Created By Plague
+        /// Creates A GUI.DropDown Menu (Y'Know, That One Thing Unity Never Gave You) - Created By Plague
         /// </summary>
         /// <param name="PositionAndScale">The Position And Scale Of The DropDown Menu</param>
         /// <param name="MainButtonText">The Main Button For The DropDown's Text</param>
@@ -34,6 +34,7 @@ namespace PlagueGUI
             }
 
             DropDownData DropData = null;
+
             List<DropDownData> DropDowns = DropDownState.Keys.Where(o => o.DropDownButtonText == MainButtonText).ToList();
 
             if (DropDowns.Count == 0)
@@ -72,26 +73,30 @@ namespace PlagueGUI
 
                 int ButtonPosMultiplier = 0;
 
-                foreach (KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>> Button in Buttons)
+                int ControlID = 0;
+
+                for (int i = 0; i < Buttons.Count; i++)
                 {
-                    if (!DropDownState[DropData].StringCache.ContainsKey(Button.Value))
+                    KeyValuePair<Tuple<string, string, ButtonType, bool>, Action<string, int, float, bool>> Button = Buttons[i];
+
+                    if (!DropDownState[DropData].StringCache.ContainsKey(ControlID))
                     {
-                        DropDownState[DropData].StringCache[Button.Value] = Button.Key.Item1;
+                        DropDownState[DropData].StringCache[ControlID] = Button.Key.Item1;
                     }
 
-                    if (!DropDownState[DropData].IntCache.ContainsKey(Button.Value))
+                    if (!DropDownState[DropData].IntCache.ContainsKey(ControlID))
                     {
-                        DropDownState[DropData].IntCache[Button.Value] = 0;
+                        DropDownState[DropData].IntCache[ControlID] = 0;
                     }
 
-                    if (!DropDownState[DropData].FloatCache.ContainsKey(Button.Value))
+                    if (!DropDownState[DropData].FloatCache.ContainsKey(ControlID))
                     {
-                        DropDownState[DropData].FloatCache[Button.Value] = 0f;
+                        DropDownState[DropData].FloatCache[ControlID] = 0f;
                     }
 
-                    if (!DropDownState[DropData].BoolCache.ContainsKey(Button.Value))
+                    if (!DropDownState[DropData].BoolCache.ContainsKey(ControlID))
                     {
-                        DropDownState[DropData].BoolCache[Button.Value] = Button.Key.Item4;
+                        DropDownState[DropData].BoolCache[ControlID] = Button.Key.Item4;
                     }
 
                     void MakeButton()
@@ -108,11 +113,11 @@ namespace PlagueGUI
                                 break;
 
                             case ButtonType.Toggle:
-                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[Button.Value], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[Button.Value])
+                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[ControlID], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[ControlID])
                                 {
-                                    DropDownState[DropData].BoolCache[Button.Value] = !DropDownState[DropData].BoolCache[Button.Value];
+                                    DropDownState[DropData].BoolCache[ControlID] = !DropDownState[DropData].BoolCache[ControlID];
 
-                                    Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[Button.Value]);
+                                    Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[ControlID]);
                                 }
 
                                 ButtonPosMultiplier++;
@@ -123,16 +128,16 @@ namespace PlagueGUI
 
                                 ButtonPosMultiplier++;
 
-                                float NewFloatValue = GUI.HorizontalSlider(new Rect(0, (25 * ButtonPosMultiplier) + 7, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].FloatCache[Button.Value], 0, 255);
+                                float NewFloatValue = GUI.HorizontalSlider(new Rect(0, (25 * ButtonPosMultiplier) + 7, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].FloatCache[ControlID], 0, 255);
 
-                                if (NewFloatValue != DropDownState[DropData].FloatCache[Button.Value])
+                                if (NewFloatValue != DropDownState[DropData].FloatCache[ControlID])
                                 {
-                                    DropDownState[DropData].FloatCache[Button.Value] = NewFloatValue;
+                                    DropDownState[DropData].FloatCache[ControlID] = NewFloatValue;
 
-                                    Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[Button.Value], true);
+                                    Button.Value?.Invoke("", 0, DropDownState[DropData].FloatCache[ControlID], true);
                                 }
 
-                                GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", "Current Value: " + ((int)DropDownState[DropData].FloatCache[Button.Value]).ToString()));
+                                GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", "Current Value: " + ((int)DropDownState[DropData].FloatCache[ControlID]).ToString()));
 
                                 ButtonPosMultiplier++;
                                 break;
@@ -144,15 +149,15 @@ namespace PlagueGUI
                                 break;
 
                             case ButtonType.TextArea:
-                                string NewStringValue = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[Button.Value]);
+                                string NewStringValue = GUI.TextArea(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].StringCache[ControlID]);
 
                                 GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent("", Button.Key.Item2));
 
-                                if (NewStringValue != DropDownState[DropData].StringCache[Button.Value])
+                                if (NewStringValue != DropDownState[DropData].StringCache[ControlID])
                                 {
-                                    DropDownState[DropData].StringCache[Button.Value] = NewStringValue;
+                                    DropDownState[DropData].StringCache[ControlID] = NewStringValue;
 
-                                    Button.Value?.Invoke(DropDownState[DropData].StringCache[Button.Value], 0, 0f, true);
+                                    Button.Value?.Invoke(DropDownState[DropData].StringCache[ControlID], 0, 0f, true);
                                 }
 
                                 ButtonPosMultiplier++;
@@ -175,6 +180,8 @@ namespace PlagueGUI
                     {
                         MakeButton();
                     }
+
+                    ControlID++;
                 }
 
                 GUI.EndScrollView();
@@ -231,10 +238,10 @@ namespace PlagueGUI
         public Vector2 ScrollPosition = Vector2.zero;
 
         //Caching For ButtonType Variation Data Types
-        public Dictionary<Action<string, int, float, bool>, string> StringCache = new Dictionary<Action<string, int, float, bool>, string>();
-        public Dictionary<Action<string, int, float, bool>, int> IntCache = new Dictionary<Action<string, int, float, bool>, int>();
-        public Dictionary<Action<string, int, float, bool>, float> FloatCache = new Dictionary<Action<string, int, float, bool>, float>();
-        public Dictionary<Action<string, int, float, bool>, bool> BoolCache = new Dictionary<Action<string, int, float, bool>, bool>();
+        public Dictionary<int, string> StringCache = new Dictionary<int, string>();
+        public Dictionary<int, int> IntCache = new Dictionary<int, int>();
+        public Dictionary<int, float> FloatCache = new Dictionary<int, float>();
+        public Dictionary<int, bool> BoolCache = new Dictionary<int, bool>();
     }
 
     /// <summary>
@@ -248,4 +255,6 @@ namespace PlagueGUI
         Slider,
         Label
     }
+
+    //To Do: Yes/No & Okay Dialog With GUI Class
 }
