@@ -123,6 +123,25 @@ namespace PlagueGUI
                                 ButtonPosMultiplier++;
                                 break;
 
+                            case ButtonType.RadialToggle:
+                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[ControlID], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[ControlID])
+                                {
+                                    DropDownState[DropData].BoolCache[ControlID] = true;
+
+                                    for (int i2 = 0; i2 < DropDownState[DropData].BoolCache.Count; i2++)
+                                    {
+                                        if (i2 != ControlID)
+                                        {
+                                            DropDownState[DropData].BoolCache[i2] = false;
+                                        }
+                                    }
+
+                                    Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[ControlID]);
+                                }
+
+                                ButtonPosMultiplier++;
+                                break;
+
                             case ButtonType.Slider:
                                 GUI.Label(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), new GUIContent(Button.Key.Item1, Button.Key.Item2));
 
@@ -251,6 +270,7 @@ namespace PlagueGUI
     {
         Button,
         Toggle,
+        RadialToggle,
         TextArea,
         Slider,
         Label
