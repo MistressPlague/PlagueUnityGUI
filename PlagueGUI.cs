@@ -99,6 +99,14 @@ namespace PlagueGUI
                         DropDownState[DropData].BoolCache[ControlID] = Button.Key.Item4;
                     }
 
+                    if (Button.Key.Item3 == ButtonType.Radial)
+                    {
+                        if (!DropDownState[DropData].BoolCache.ContainsKey(ControlID))
+                        {
+                            DropDownState[DropData].BoolCache[ControlID] = Button.Key.Item4;
+                        }
+                    }
+
                     void MakeButton()
                     {
                         switch (Button.Key.Item3)
@@ -124,19 +132,19 @@ namespace PlagueGUI
                                 break;
 
                             case ButtonType.Radial:
-                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].BoolCache[ControlID], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].BoolCache[ControlID])
+                                if (GUI.Toggle(new Rect(0, 25 * ButtonPosMultiplier, PositionAndScale.width, PositionAndScale.height), DropDownState[DropData].RadialBoolCache[ControlID], new GUIContent(Button.Key.Item1, Button.Key.Item2)) != DropDownState[DropData].RadialBoolCache[ControlID])
                                 {
-                                    DropDownState[DropData].BoolCache[ControlID] = true;
+                                    DropDownState[DropData].RadialBoolCache[ControlID] = true;
 
-                                    for (int i2 = 0; i2 < DropDownState[DropData].BoolCache.Count; i2++)
+                                    for (int i2 = 0; i2 < DropDownState[DropData].RadialBoolCache.Count; i2++)
                                     {
                                         if (i2 != ControlID)
                                         {
-                                            DropDownState[DropData].BoolCache[i2] = false;
+                                            DropDownState[DropData].RadialBoolCache[i2] = false;
                                         }
                                     }
 
-                                    Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].BoolCache[ControlID]);
+                                    Button.Value?.Invoke("", 0, 0f, DropDownState[DropData].RadialBoolCache[ControlID]);
                                 }
 
                                 ButtonPosMultiplier++;
@@ -261,6 +269,7 @@ namespace PlagueGUI
         public Dictionary<int, int> IntCache = new Dictionary<int, int>();
         public Dictionary<int, float> FloatCache = new Dictionary<int, float>();
         public Dictionary<int, bool> BoolCache = new Dictionary<int, bool>();
+        public Dictionary<int, bool> RadialBoolCache = new Dictionary<int, bool>();
     }
 
     /// <summary>
