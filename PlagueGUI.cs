@@ -101,9 +101,9 @@ namespace PlagueGUI
 
                     if (Button.Key.Item3 == ButtonType.Radial)
                     {
-                        if (!DropDownState[DropData].BoolCache.ContainsKey(ControlID))
+                        if (!DropDownState[DropData].RadialBoolCache.ContainsKey(ControlID))
                         {
-                            DropDownState[DropData].BoolCache[ControlID] = Button.Key.Item4;
+                            DropDownState[DropData].RadialBoolCache[ControlID] = Button.Key.Item4;
                         }
                     }
 
